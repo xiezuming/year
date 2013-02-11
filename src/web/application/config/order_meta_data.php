@@ -69,6 +69,7 @@ $config['summary_field_names'] = array(
 		'transactionID',
 		'listID',
 		'paypalTnxnID',
+		'salePrice',
 		'buyerID',
 		'buyerName',
 		'orderStatus',
@@ -92,7 +93,7 @@ $config['order_actions'] = array(
 				'type' => 'update',
 				'roles' => array('A', 'N'),
 				'editable_fields' => array('buyerRefund', 'sellerRefund'),
-				'read_only_fields' => $config['summary_field_names'],
+				'read_only_fields' => $all_field,
 		),
 		'update_purchase' => array(
 				'name' => 'update_purchase',
@@ -100,7 +101,7 @@ $config['order_actions'] = array(
 				'type' => 'update',
 				'roles' => array('A', 'N'),
 				'editable_fields' => array('orderStatus', 'cost', 'email', 'creditcard', 'orderNum', 'source', 'tax'),
-				'read_only_fields' => $config['summary_field_names'],
+				'read_only_fields' => $all_field,
 		),
 		'update_tracking' => array(
 				'name' => 'update_tracking',
@@ -108,7 +109,7 @@ $config['order_actions'] = array(
 				'type' => 'update',
 				'roles' => array('A', 'N'),
 				'editable_fields' => array('carrier', 'trackingNum'),
-				'read_only_fields' => $config['summary_field_names'],
+				'read_only_fields' => $all_field,
 		),
 		'update_all' => array(
 				'name' => 'update_all',
@@ -242,7 +243,7 @@ $config[ 'order_fields' ] = array(
 		'salePrice' => array(
 				'name' => 'salePrice',
 				'label' => 'salePrice',
-				'validation_rule' => 'decimal',
+				'validation_rule' => 'numeric',
 		),
 		'quantity' => array(
 				'name' => 'quantity',
@@ -306,7 +307,7 @@ $config[ 'order_fields' ] = array(
 		'cost' => array(
 				'name' => 'cost',
 				'label' => 'cost',
-				'validation_rule' => 'decimal',
+				'validation_rule' => 'numeric',
 		),
 		'email' => array(
 				'name' => 'email',
@@ -330,7 +331,7 @@ $config[ 'order_fields' ] = array(
 		'tax' => array(
 				'name' => 'tax',
 				'label' => 'tax',
-				'validation_rule' => 'decimal',
+				'validation_rule' => 'numeric',
 		),
 		'returnStatus' => array(
 				'name' => 'returnStatus',
@@ -340,12 +341,12 @@ $config[ 'order_fields' ] = array(
 		'buyerRefund' => array(
 				'name' => 'buyerRefund',
 				'label' => 'buyerRefund',
-				'validation_rule' => 'decimal',
+				'validation_rule' => 'numeric',
 		),
 		'sellerRefund' => array(
 				'name' => 'sellerRefund',
 				'label' => 'sellerRefund',
-				'validation_rule' => 'decimal',
+				'validation_rule' => 'numeric',
 		),
 		'lastUpdated' => array(
 				'name' => 'lastUpdated',
@@ -384,6 +385,6 @@ $config[ 'order_fields' ] = array(
 		'shippingCost' => array(
 				'name' => 'shippingCost',
 				'label' => 'shippingCost',
-				'validation_rule' => 'decimal',
+				'validation_rule' => 'numeric',
 		),
 );

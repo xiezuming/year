@@ -169,10 +169,12 @@ class Order extends CI_Controller {
 				'rules' => $table_field->get_validation_rule(),
 				));
 			}
+			$order_init_data = array();
 			/* @var $table_field Table_field */
 			foreach ($order_action->get_read_only_fields() as $table_field)
 			{
 				array_push($insert_field_name_arr, $table_field->get_name());
+				$order_init_data[$table_field->get_name()] = $this->input->post($table_field->get_name());
 			}
 
 			$this->form_validation->set_rules($rules);
@@ -184,7 +186,7 @@ class Order extends CI_Controller {
 				redirect(site_url('/order/index/1'), 'refresh');
 			}
 			
-			$data['order_init_data'] = array();
+			$data['order_init_data'] = $order_init_data;
 		}
 
 		$data['title'] = $order_action->get_label();

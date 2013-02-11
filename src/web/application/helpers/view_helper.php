@@ -46,13 +46,13 @@ if ( ! function_exists('create_field_input'))
 
 		if ($hidden)
 		{
-			return '<input type="hidden", name="'.$name.'" value="'.$value.'" />';
+			return '<input type="hidden" name="'.$name.'" value="'.$value.'" />';
 		}
 
 		$view_style = $table_field->get_view_style();
 		if (strpos($view_style, 'input') === 0)
 		{
-			return '<input type="input", name="'.$name.'" value="'.$value.'" />';
+			return '<input type="input" name="'.$name.'" value="'.$value.'" />';
 		}
 		else if (strpos($view_style, 'textarea') === 0)
 		{
@@ -63,7 +63,7 @@ if ( ! function_exists('create_field_input'))
 		{
 			if (strlen($view_style)<=7)
 			{
-				return '<input type="input", name="'.$name.'" value="'.$value.'" />';
+				return '<input type="input" name="'.$name.'" value="'.$value.'" />';
 			}
 			else
 			{
