@@ -75,6 +75,7 @@ $config['summary_field_names'] = array(
 		'salePrice',
 		'buyerID',
 		'buyerName',
+		'poLine',
 		'orderStatus',
 		'cost',
 		'email',
