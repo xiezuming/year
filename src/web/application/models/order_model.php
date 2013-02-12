@@ -19,33 +19,16 @@ Class Order_model extends CI_Model
 		return $query->row_array();
 	}
 
-	public function modify_order($id, $modify_field_name_arr)
+	public function modify_order($id, $modify_data)
 	{
-		$data = array();
-
-		foreach ($modify_field_name_arr as $modify_field_name)
-		{
-			$value = $this->input->post($modify_field_name);
-			$value  = empty($value) ? NULL : $value;
-			$data[$modify_field_name] = $value;
-		}
-			
 		$this->db->where('id', $id);
-		$this->db->update(self::TABLE_ORDER, $data);
+		$this->db->update(self::TABLE_ORDER, $modify_data);
 	}
 
-	public function insert_order($insert_field_name_arr)
+	public function insert_order($insert_data)
 	{
-		$data = array();
-		
-		foreach ($insert_field_name_arr as $insert_field_name)
-		{
-			$value = $this->input->post($insert_field_name);
-			$value  = empty($value) ? NULL : $value;
-			$data[$insert_field_name] = $value;
-		}
-			
-		$this->db->insert(self::TABLE_ORDER, $data);
+		$this->db->insert(self::TABLE_ORDER, $insert_data);
+		return $this->db->insert_id();
 	}
 }
 ?>

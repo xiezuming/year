@@ -144,7 +144,6 @@ if ( ! function_exists('welcome_left'))
 	{
 		$username = '';
 		$CI =& get_instance();
-		$CI->session->userdata('USER');
 		if($CI->session->userdata('USER'))
 		{
 			$user = $CI->session->userdata('USER');

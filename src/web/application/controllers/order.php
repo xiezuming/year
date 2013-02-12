@@ -2,6 +2,7 @@
 /**
  * @property Order_model $order_model
  * @property Order_meta_data_model $order_meta_data_model
+ * @property Log_model $log_model
  */
 class Order extends CI_Controller {
 
@@ -10,6 +11,7 @@ class Order extends CI_Controller {
 		parent::__construct();
 		$this->load->model('order_model');
 		$this->load->model('order_meta_data_model');
+		$this->load->model('log_model');
 	}
 
 	public function index($requery = FALSE)
@@ -76,12 +78,13 @@ class Order extends CI_Controller {
 
 		if($this->input->post('submit'))
 		{
-			$modify_field_name_arr = array();
+			$modify_data = array();
 			$rules = array();
 			/* @var $table_field Table_field */
 			foreach ($order_action->get_editable_fields() as $table_field)
 			{
-				array_push($modify_field_name_arr, $table_field->get_name());
+				$field_name = $table_field->get_name();
+				$modify_data[$field_name] = $this->get_post_field_value($field_name);
 				array_push($rules, array
 				(
 				'field' => $table_field->get_name(),
@@ -93,7 +96,15 @@ class Order extends CI_Controller {
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run())
 			{
-				$this->order_model->modify_order($id, $modify_field_name_arr);
+				// database
+				$this->order_model->modify_order($id, $modify_data);
+				// log
+				$this->log_model->insert(
+						$this->get_username(),
+						'order_'.$order_action->get_name(),
+						$id,
+						print_r($modify_data, TRUE));
+
 				$this->session->set_flashdata('falshmsg',
 						array('type'=>'message', 'content'=>'The record has been updated successfully.'));
 				redirect(site_url("/order/update/".$action_name.'/'.$id), 'refresh');
@@ -133,6 +144,7 @@ class Order extends CI_Controller {
 
 		if(!$this->input->post('submit'))
 		{
+			// initial job for create
 			if ($id != '')
 			{
 				$order_init_data = $this->order_model->get_order($id);
@@ -156,12 +168,13 @@ class Order extends CI_Controller {
 		}
 		else
 		{
-			$insert_field_name_arr = array();
+			$insert_data = array();
 			$rules = array();
 			/* @var $table_field Table_field */
 			foreach ($order_action->get_editable_fields() as $table_field)
 			{
-				array_push($insert_field_name_arr, $table_field->get_name());
+				$field_name = $table_field->get_name();
+				$insert_data[$field_name] = $this->get_post_field_value($field_name);
 				array_push($rules, array
 				(
 				'field' => $table_field->get_name(),
@@ -173,19 +186,29 @@ class Order extends CI_Controller {
 			/* @var $table_field Table_field */
 			foreach ($order_action->get_read_only_fields() as $table_field)
 			{
-				array_push($insert_field_name_arr, $table_field->get_name());
-				$order_init_data[$table_field->get_name()] = $this->input->post($table_field->get_name());
+				$field_name = $table_field->get_name();
+				$field_value = $this->get_post_field_value($field_name);
+				$insert_data[$field_name] = $field_value;
+				$order_init_data[$field_name] = $field_value;
 			}
 
 			$this->form_validation->set_rules($rules);
 			if ($this->form_validation->run())
 			{
-				$this->order_model->insert_order($insert_field_name_arr);
+				// database
+				$id = $this->order_model->insert_order($insert_data);
+				// log
+				$this->log_model->insert(
+						$this->get_username(),
+						'order_'.$order_action->get_name(),
+						$id,
+						print_r($insert_data, TRUE));
+
 				$this->session->set_flashdata('falshmsg',
 						array('type'=>'message', 'content'=>'The record has been created successfully.'));
 				redirect(site_url('/order/index/1'), 'refresh');
 			}
-			
+
 			$data['order_init_data'] = $order_init_data;
 		}
 
@@ -210,11 +233,29 @@ class Order extends CI_Controller {
 		return $where_arr;
 	}
 
+	private function get_post_field_value($field_name)
+	{
+		$field_value = $this->input->post($field_name);
+		return empty($field_value) ? NULL : $field_value;
+	}
+
+	private function get_username()
+	{
+		$username = '';
+		if($this->session->userdata('USER'))
+		{
+			$user = $this->session->userdata('USER');
+			$username = $user['username'];
+		}
+		return $username;
+	}
+
 	private function callback_create_pruchase($order_init_data)
 	{
-		$order_init_data['poLine'] = $order_init_data['poLine']++;
+		$order_init_data['poLine'] = $order_init_data['poLine'] + 1;
 		$empty_field_name_arr = array(
 				'salePrice',
+				'quantity',
 				'orderStatus',
 				'cost',
 				'email',

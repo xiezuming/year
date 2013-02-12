@@ -60,7 +60,9 @@ $config['query_conditions_field_names'] = array(
 		'transactionID',
 		'salesrecord',
 		'buyerID',
-		'buyerName'
+		'buyerName',
+		'orderNum',
+		'listID',
 );
 
 $config['summary_field_names'] = array(
