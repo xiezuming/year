@@ -71,6 +71,7 @@ $config['summary_field_names'] = array(
 		'transactionID',
 		'listID',
 		'paypalTnxnID',
+		'salesrecord',
 		'salePrice',
 		'buyerID',
 		'buyerName',
