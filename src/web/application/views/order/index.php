@@ -96,7 +96,7 @@ $(document).ready(function() {
 		"bPaginate": false,
 		"bLengthChange": false,
 		"bFilter": false,
-		"bSort": true,
+		"bSort": false,
 		"bInfo": true
 	} );
 	new FixedColumns( oTable, {
