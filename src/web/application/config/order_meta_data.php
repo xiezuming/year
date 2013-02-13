@@ -96,7 +96,7 @@ $config['order_actions'] = array(
 				'label' => 'Process Return',
 				'type' => 'update',
 				'roles' => array('A', 'N'),
-				'editable_fields' => array('buyerRefund', 'sellerRefund'),
+				'editable_fields' => array('buyerRefund', 'sellerRefund', 'returnStatus'),
 				'read_only_fields' => $all_field,
 		),
 		'update_purchase' => array(

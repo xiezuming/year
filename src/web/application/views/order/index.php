@@ -3,14 +3,46 @@
 <script
 	type="text/javascript"
 	src="<?php echo base_url('/js/FixedColumns.min.js')?>"></script>
+<script
+	type="text/javascript" src="<?php echo base_url('/js/jquery-ui.js')?>"></script>
 
-<?php echo form_open('order/') ?>
+<link
+	rel="stylesheet" href="<?php echo base_url('/css/jquery-ui.css')?>">
 
+<?php
+$active_query_page = isset($adv_query_condition) && $adv_query_condition!=''?1:0;
+?>
+
+<script>
+$(function() {
+	$("#tabs").tabs({
+		 active: <?php echo $active_query_page ?> });
+});
+
+function check_query_input()
+{
+	if ("1" == $('#tabs').tabs("option", "active"))
+	{
+		if ('' == $('select[name="adv_query_condition"]').val())
+		{
+			alert("The query condition can not be empty.");
+			return false;
+		}
+	}
+return true;
+}
+</script>
+
+<?php echo form_open('order/', 'onsubmit="return check_query_input();"') ?>
 <div
-	style="width: 99%; margin-left: auto; margin-right: auto; border: solid 1px #bbb;">
-	<table style="width: 100%">
-		<tr>
-			<td><?php
+	style="width: 100%; margin-left: auto; margin-right: auto; border: solid 0px #bbb;">
+	<div id="tabs" style="height: 100px">
+		<ul>
+			<li><a href="#tabs-1">Basic Query</a></li>
+			<li><a href="#tabs-2">Advanced Query</a></li>
+		</ul>
+		<div id="tabs-1">
+			<label> <?php
 			echo 'Please enter ';
 			$count = count($query_conditions_fields);
 			$i = 0;
@@ -30,18 +62,18 @@
 			}
 			echo ' below:';
 			?>
-			</td>
-		</tr>
-		<tr>
-			<td><input type="text" name="query_id" size="50"
-				value="<?php echo $query_id?>" />&nbsp;<input type="submit"
-				name="submit" value="Query" class="btn" />
-			</td>
-		</tr>
-	</table>
-
+			</label> <br /> <input type="text" name="basic_query_id" size="50"
+				value="<?php echo $basic_query_id?>" /> &nbsp;<input type="submit"
+				name="basic_query" value="Query" class="btn" />
+		</div>
+		<div id="tabs-2">
+			<label> Please select the query condition: </label> <br />
+			<?php echo form_dropdown('adv_query_condition', meta_code_array('adv_query_condition'), $adv_query_condition);?>
+			&nbsp; <input type="submit" name="advanced_query" value="Query"
+				class="btn" />
+		</div>
+	</div>
 	<?php echo '</form>' ?>
-	<br />
 
 	<table id="ordertable" class="datatable">
 		<thead>
@@ -66,10 +98,7 @@
 					/* @var $order_action Order_action */
 					foreach ($order_actions as $order_action)
 					{
-						$action_url = '/order/'
-										.$order_action->get_type().'/'
-										.$order_action->get_name().'/'
-										.$order['id'];
+						$action_url = '/order/'.$order_action->get_type().'/'.$order_action->get_name().'/'.$order['id'];
 						echo '<li>'.anchor($action_url, $order_action->get_label().'<br/>').'</li>';
 					}
 					echo '</ul></li></div></td>';
@@ -85,6 +114,7 @@
 
 	</table>
 </div>
+
 <script type="text/javascript" charset="utf-8">
 $(document).ready(function() {
 	var oTable = $('#ordertable').dataTable( {

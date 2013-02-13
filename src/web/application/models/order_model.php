@@ -4,12 +4,20 @@ Class Order_model extends CI_Model
 	const TABLE_ORDER = 'salesrecord';
 	const LIMIT_RECORD = 20;
 
-	public function get_order_list($where)
+	public function get_order_list($where_array)
 	{
-		$this->db->or_where($where);
-		$this->db->order_by('id');
+		$this->db->or_like($where_array);
+		$this->db->order_by('id', 'DESC');
 		$this->db->limit(self::LIMIT_RECORD);
 		$query = $this->db->get_where(self::TABLE_ORDER);
+		log_message('debug', 'get_order_list: sql = '.$this->db->last_query());
+		return $query->result_array();
+	}
+
+	public function get_order_list_where_clause($where_clause)
+	{
+		$query = $this->db->query("select * from ".self::TABLE_ORDER.' where '.$where_clause);
+		log_message('debug', 'get_order_list_where_clause: sql = '.$this->db->last_query());
 		return $query->result_array();
 	}
 

@@ -25,22 +25,47 @@ class Order extends CI_Controller {
 		$data['query_conditions_fields'] = $this->order_meta_data_model->get_query_conditions_fields();
 		$data['summery_fields'] = $this->order_meta_data_model->get_summary_fields();
 
+		log_message('debug', 'basic_query = '. $this->input->post('basic_query'));
+		log_message('debug', 'advanced_query = '. $this->input->post('advanced_query'));
+
 		if ($requery)
 		{
-			$query_id = $this->session->userdata('LAST_ORDER_QUERY_WHERE');
+			// get the last query condition from the session
+			$last_query_condition = $this->session->userdata('LAST_ORDER_QUERY_WHERE');
+			log_message('debug', '$last_query_condition = '.$last_query_condition);
+			if (strpos($last_query_condition, 'bac_') === 0)
+			{
+				$basic_query_id = substr($last_query_condition, 4);
+			}
+			else if (strpos($last_query_condition, 'adv_') === 0)
+			{
+				$adv_query_condition = substr($last_query_condition, 4);
+			}
 		}
-		else
+		else if ($this->input->post('basic_query'))
 		{
-			$query_id = $this->input->post("query_id");
+			$basic_query_id = $this->input->post("basic_query_id");
 		}
-		if($this->input->post('submit') || $requery)
+		else if ($this->input->post('advanced_query'))
 		{
-			$where = $this->create_where($query_id);
-			$data['orders'] =  $this->order_model->get_order_list($where);
-			$this->session->set_userdata('LAST_ORDER_QUERY_WHERE', $query_id);
+			$adv_query_condition = $this->input->post("adv_query_condition");
 		}
-		$data['query_id'] = $query_id;
 
+		// set the last query condition to the session
+		if (isset($basic_query_id))
+		{
+			$where_array = $this->create_where_array($basic_query_id);
+			$data['orders'] =  $this->order_model->get_order_list($where_array);
+			$this->session->set_userdata('LAST_ORDER_QUERY_WHERE', 'bac_'.$basic_query_id);
+		}
+		else if (isset($adv_query_condition))
+		{
+			$data['orders'] =  $this->order_model->get_order_list_where_clause($adv_query_condition);
+			$this->session->set_userdata('LAST_ORDER_QUERY_WHERE', 'adv_'.$adv_query_condition);
+		}
+		$data['basic_query_id'] = isset($basic_query_id) ? $basic_query_id : '';
+		$data['adv_query_condition'] = isset($adv_query_condition) ? $adv_query_condition : '';
+		
 		$this->load->view('templates/header', $data);
 		$this->load->view('order/index', $data);
 		$this->load->view('templates/footer');
@@ -219,7 +244,7 @@ class Order extends CI_Controller {
 		$this->load->view('templates/footer');
 	}
 
-	private function create_where($query_id)
+	private function create_where_array($query_id)
 	{
 		$where_arr = array();
 		if (isset($query_id) && $query_id != '')
