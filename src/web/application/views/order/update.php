@@ -41,6 +41,7 @@ if (count($editable_field_cells) > 0)
 <hr />
 <?php
 }
+echo '</form>';
 ?>
 
 <?php 
@@ -59,4 +60,3 @@ if (count($read_only_field_cells) > 0)
 }
 ?>
 
-<?php echo '</form>' ?>
